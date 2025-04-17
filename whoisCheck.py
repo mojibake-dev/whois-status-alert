@@ -31,10 +31,10 @@ def grabStatus(domain):
     return status
 
 
-def saveStatus(status):
-    with open('status.json', 'w') as file:
+def saveStatus(status, fileName="status.json"):
+    with open(fileName, 'w') as file:
         json.dump(status, file)
-    logging.info(f"Logging status {status}")
+    logging.info(f"Logging status {status} to file: {fileName}")
 
 
 def compareStatus(status, lastStatus):
@@ -57,18 +57,17 @@ def main():
     except FileNotFoundError:
         logging.warning(f"Existing status not found for: {domain}. Generating first status log.")
         saveStatus(status)
+        # TODO: send text alert
         return
 
-    
     # compare
-    # if status same
-        # log 
-        # store
-        # quit
-    # if status different
-        # log
-        # store new
-        # report
+    if status == lastStatus:
+        logging.info(f"Recently queried status matches our stored status. Nothing has changed.")
+        saveStatus(status)
+    else:
+        logging.info(f"Status has changed!!!")
+        saveStatus(status, "newStatus.json")
+        # TODO: send text alert.
 
 
 if __name__ == "__main__":
