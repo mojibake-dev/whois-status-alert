@@ -43,6 +43,8 @@ def compareStatus(status, lastStatus):
     else:
         return False
 
+def txtAlert():
+    print('TEXT ALERT GOES HERE')
 
 ################ MAIN LOGIC ################
 def main():
@@ -57,7 +59,7 @@ def main():
     except FileNotFoundError:
         logging.warning(f"Existing status not found for: {domain}. Generating first status log.")
         saveStatus(status)
-        # TODO: send text alert
+        txtAlert()
         return
 
     # compare
@@ -67,7 +69,7 @@ def main():
     else:
         logging.info(f"Status has changed!!!")
         saveStatus(status, "newStatus.json")
-        # TODO: send text alert.
+        txtAlert()
 
 
 ################ EXECUTE ################
