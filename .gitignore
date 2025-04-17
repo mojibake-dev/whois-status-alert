@@ -177,4 +177,5 @@ cython_debug/
 .pypirc
 
 #project
-keys
+status.json
+app.log
