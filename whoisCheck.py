@@ -1,7 +1,7 @@
 import whois, logging, os, json
 from dotenv import load_dotenv
 
-
+################ CONFIG LOGGING ################
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -11,7 +11,7 @@ logging.basicConfig(
     ],
 )
 
-
+################ FUNCTION DEFINITIONS ################
 def loadEnv():
     load_dotenv()
     domain = os.getenv("DOMAIN")
@@ -44,12 +44,12 @@ def compareStatus(status, lastStatus):
         return False
 
 
+################ MAIN LOGIC ################
 def main():
-    
+
     domain = loadEnv()
 
     status = grabStatus(domain)
-    logging
 
     # check for last status 
     try:
@@ -70,5 +70,7 @@ def main():
         # TODO: send text alert.
 
 
+################ EXECUTE ################
 if __name__ == "__main__":
     main()
+
