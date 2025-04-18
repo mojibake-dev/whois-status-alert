@@ -24,8 +24,9 @@ TODO: detail.
 
 TODO: This code will evolve over time to be hosted on AWS and ultimately alert via text
 
-### security concerns
+## security concerns
 
+### Deserialization Attack
 Even though the log of the last time the whois was queried is not public facing and it's highly unlikely to be tampered with, we've opted not to use pickle as quoting from python's docs here: https://docs.python.org/3/library/pickle.html
 
 > Warning
@@ -35,3 +36,13 @@ Even though the log of the last time the whois was queried is not public facing 
 > Safer serialization formats such as json may be more appropriate if you are processing untrusted data. See Comparison with json.
 
 as we only need to store a simple list, json will suffice. 
+
+### Chat GPT recommends vulnerable python docker image 
+
+when consulting openAI (yes I know, but sometimes its useful for synthesizing examples of multiple interoperable parts in ways that documentation or forum posts fall short.) The generated code suggested this code block. 
+
+however python 3.11-slim suffers from a critical vulnerability listed here [https://hub.docker.com/layers/library/python/3.11-slim/images/sha256-974cb5b34070dd2f5358ca1de1257887bec76ba87f6e727091669035e5f3484d]
+
+'''
+FROM public.ecr.aws/lambda/python:3.11
+'''
