@@ -1,27 +1,22 @@
-import whois, logging, os, json
-from dotenv import load_dotenv
+import whois, logging, os, json, boto3
 
 ################ CONFIG LOGGING ################
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("app.log"),  # Log to a file
+#        logging.FileHandler("app.log"),  # Log to a file
         logging.StreamHandler(),  # Also log to the console 
     ],
 )
 
 ################ FUNCTION DEFINITIONS ################
-def loadEnv():
-    load_dotenv()
-    domain = os.getenv("DOMAIN")
-    logging.info(f"Loading domain {domain} from .env")
-    return domain
 
 
-def loadLastStatus():
-    with open('status.json') as file:
-        lastStatus = json.load(file)
+def loadLastStatus(s3, bucketName, key):
+    response = s3.get_object(Bucket=bucketName, Key=key)
+    content = response['Body'].read().decode('utf-8')
+    lastStatus = json.loads(content)
     return lastStatus
 
 
@@ -31,10 +26,14 @@ def grabStatus(domain):
     return status
 
 
-def saveStatus(status, fileName="status.json"):
-    with open(fileName, 'w') as file:
-        json.dump(status, file)
-    logging.info(f"Logging status {status} to file: {fileName}")
+def saveStatus(s3, status, bucketName, key="status.json"):
+    jsonContent = json.dumps(status)
+    s3.put_object(
+        Bucket = bucketName,
+        Key = key,
+        Body = jsonContent.encode('utf-8')
+        )
+    logging.info(f"Logging status {status} to file: {key}")
 
 
 def compareStatus(status, lastStatus):
@@ -43,23 +42,26 @@ def compareStatus(status, lastStatus):
     else:
         return False
 
-def txtAlert():
+def emailAlert():
     print('TEXT ALERT GOES HERE')
 
 ################ MAIN LOGIC ################
 def main():
 
-    domain = loadEnv()
+    s3 = boto3.client('s3')
 
-    status = grabStatus(domain)
+    BUCKET_NAME = os.environ['BUCKET_NAME']
+    DOMAIN = os.environ['DOMAIN']
+
+    status = grabStatus(DOMAIN)
 
     # check for last status 
     try:
-        lastStatus = loadLastStatus()
-    except FileNotFoundError:
-        logging.warning(f"Existing status not found for: {domain}. Generating first status log.")
+        lastStatus = loadLastStatus(s3, BUCKET_NAME, "status.json")
+    except 'NoSuchKey':
+        logging.warning(f"Existing status not found for: {DOMAIN}. Generating first status log.")
         saveStatus(status)
-        txtAlert()
+        emailAlert()
         return
 
     # compare
@@ -69,7 +71,7 @@ def main():
     else:
         logging.info(f"Status has changed!!!")
         saveStatus(status, "newStatus.json")
-        txtAlert()
+        emailAlert()
 
 
 ################ EXECUTE ################

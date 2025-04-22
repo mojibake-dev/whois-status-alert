@@ -1,6 +1,6 @@
 # whois-status-alert
 
-### The Problem
+## The Problem
 
 This project is a script to periodically check a domain's status. 
 
@@ -18,7 +18,7 @@ I would like to know when it frees up, but a lot of domain brokers do not truck 
 
 So I build this myself.
 
-### The Solution
+## The Solution
 
 TODO: detail. 
 
@@ -37,7 +37,7 @@ Even though the log of the last time the whois was queried is not public facing 
 
 as we only need to store a simple list, json will suffice. 
 
-### Chat GPT recommends vulnerable python docker image 
+#### Chat GPT recommends vulnerable python docker image 
 
 when consulting openAI (yes I know, but sometimes its useful for synthesizing examples of multiple interoperable parts in ways that documentation or forum posts fall short.) The generated code suggested this code block. 
 
@@ -46,3 +46,12 @@ however python 3.11-slim suffers from a critical vulnerability listed here [http
 '''
 FROM public.ecr.aws/lambda/python:3.11
 '''
+
+## Helpful Documentation 
+
+- AWS
+  - https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-push-iam.html
+  - dhttps://repost.aws/knowledge-center/lambda-send-email-ses
+
+- External
+  - https://medium.com/@denissedamian/step-by-step-guide-to-ci-cd-for-aws-lambda-with-docker-and-github-actions-c02a9726fd44
