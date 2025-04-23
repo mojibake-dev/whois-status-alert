@@ -16,7 +16,7 @@ There is a domain I would like, however it currently has the following bizarre s
 this is because it is locked due to its involvement in multiple romanian court cases. 
 I would like to know when it frees up, but a lot of domain brokers do not truck in .ro domains.
 
-So I build this myself.
+So I have built this myself.
 
 ## The Solution
 
@@ -26,7 +26,7 @@ TODO: This code will evolve over time to be hosted on AWS and ultimately alert v
 
 ## security concerns
 
-### Deserialization Attack
+#### Deserialization Attack
 Even though the log of the last time the whois was queried is not public facing and it's highly unlikely to be tampered with, we've opted not to use pickle as quoting from python's docs here: https://docs.python.org/3/library/pickle.html
 
 > Warning
@@ -46,6 +46,43 @@ however python 3.11-slim suffers from a critical vulnerability listed here [http
 '''
 FROM public.ecr.aws/lambda/python:3.11
 '''
+
+#### Environment Variables
+Any variables for URL's , the domain queried, or AWS resource names are obfuscated as environment variables and are not represented in source code. 
+
+## High Level Overview of Steps
+
+DEV
+- work out script logic on local machine
+
+DEVOPS
+- configure as docker image
+- create repository in AWS 
+- set up pipeline to compile image and push to repository
+  - create user 
+  - create policy with permissions needed for pipeline
+  - create pipeline group and apply policy
+  - create add user to group
+  - create access keys and configure as secrets in github pipeline 
+  - use template in for github workflow to build docker image and push to repository 
+  - test and troubleshoot
+- create s3 bucket
+- create lamda 
+  - use docker image
+  - add repository access to lambda permissions
+  - add s3 bucket access to lambda permissions
+- create logging and add access to lambda permissions
+- create SES instance 
+  - add custom domain name 
+  - perform DKIM authentication to validate domain
+  - send test email
+
+DEV
+- replace code in local version that grabs json files from local file system to use `boto3` library instead 
+- modify logging to print to console
+- replace dummy alert messages
+
+TODO: finish documentation of steps
 
 ## Helpful Documentation 
 
