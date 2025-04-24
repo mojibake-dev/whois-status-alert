@@ -1,4 +1,4 @@
-import whois, os, json, boto3, datetime
+import whois, os, json, boto3, datetime, botocore
 
 
 ################ FUNCTION DEFINITIONS ################
@@ -32,13 +32,6 @@ def saveStatus(s3, status, bucketName, key="status.json"):
     logging("INFO", f"Logging status {status} to file: {key}")
 
 
-def compareStatus(status, lastStatus):
-    if status == lastStatus:
-        return True
-    else:
-        return False
-
-
 # TODO: verify arn specificity * 
 def emailAlert(client, toAddress, fromAddress, subject, body):
 
@@ -70,7 +63,7 @@ def emailAlert(client, toAddress, fromAddress, subject, body):
 
 
 ################ MAIN LOGIC ################
-def lambda_handler(event, context):
+def handler(event, context):
 
     s3 = boto3.client('s3')
     ses = boto3.client('ses', region_name='us-west-2')
@@ -87,11 +80,14 @@ def lambda_handler(event, context):
     # check for last status 
     try:
         lastStatus = loadLastStatus(s3, BUCKET_NAME, "status.json")
-    except 'NoSuchKey':
-        logging("WARNING", f"Existing status not found for: {DOMAIN}. Generating first status log.")
-        saveStatus(status)
-        emailAlert(ses, TO_ADDRESS, FROM_ADDRESS, "WHOIS_ALERT: First Log Taken", f"Existing status not found for: {DOMAIN}. Generating first status log.")
-        return
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == 'NoSuchKey':
+            logging("WARNING", f"Existing status not found for: {DOMAIN}. Generating first status log.")
+            saveStatus(s3, status, BUCKET_NAME, "status.json")
+            emailAlert(ses, TO_ADDRESS, FROM_ADDRESS, "WHOIS_ALERT: First Log Taken", f"Existing status not found for: {DOMAIN}. Generating first status log.")
+            return
+        else:
+            raise
 
     # compare
     if status == lastStatus:
@@ -99,7 +95,7 @@ def lambda_handler(event, context):
         saveStatus(status)
     else:
         logging("INFO",f"Status for {DOMAIN} has changed!!!")
-        saveStatus(status, "newStatus.json")
+        saveStatus(s3, status, BUCKET_NAME, "caughtStatus.json")
         emailAlert(ses, TO_ADDRESS, FROM_ADDRESS, "WHOIS_ALERT: DOMAIN STATUS HAS CHANGED!!!!", f"Status for {DOMAIN} has changed!!! \n CHECK WHOIS: {WHOIS_PAGE} \n SUBMIT FORM: {REQUEST_FORM}")
 
     return {

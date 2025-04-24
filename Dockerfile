@@ -1,14 +1,13 @@
 FROM public.ecr.aws/lambda/python:latest
 
-# Set working directory
-WORKDIR /app
+# Copy requirements.txt
+COPY app/requirements.txt ${LAMBDA_TASK_ROOT}
 
-# Install dependencies
-COPY app/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install the specified packages
+RUN pip install -r requirements.txt --target ${LAMBDA_TASK_ROOT}
 
-# Copy application code
-COPY app/ .
+# Copy function code
+COPY app/main.py ${LAMBDA_TASK_ROOT}
 
-# Set the command
-CMD ["main.lambda_handler"]
+# Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+CMD [ "main.handler" ]
