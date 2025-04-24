@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM public.ecr.aws/lambda/python:latest
 
 # Set working directory
 WORKDIR /app
@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ .
 
 # Set the command
-CMD ["python", "main.py"]
+CMD ["main.lamda_handler"]
