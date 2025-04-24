@@ -1,4 +1,4 @@
-FROM python:3.13-slim
+FROM public.ecr.aws/lambda/python:latest
 
 # Set working directory
 WORKDIR /app
