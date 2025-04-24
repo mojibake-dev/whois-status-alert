@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ .
 
 # Set the command
-CMD ["python", "main.py"]
+CMD ["main.handler"]
