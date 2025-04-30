@@ -92,6 +92,7 @@ TODO: finish documentation of steps
   - dhttps://repost.aws/knowledge-center/lambda-send-email-ses
   - https://repost.aws/knowledge-center/lambda-ecr-image
   - https://docs.aws.amazon.com/lambda/latest/dg/with-eventbridge-scheduler.html 
+  - https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
 
 - External
   - https://medium.com/@denissedamian/step-by-step-guide-to-ci-cd-for-aws-lambda-with-docker-and-github-actions-c02a9726fd44
