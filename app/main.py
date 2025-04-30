@@ -92,7 +92,7 @@ def handler(event, context):
     # compare
     if status == lastStatus:
         logging("INFO", f"Recently queried status matches our stored status. Nothing has changed.")
-        saveStatus(status)
+        saveStatus(s3, status, BUCKET_NAME, "status.json")
     else:
         logging("INFO",f"Status for {DOMAIN} has changed!!!")
         saveStatus(s3, status, BUCKET_NAME, "caughtStatus.json")
