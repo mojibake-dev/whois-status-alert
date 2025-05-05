@@ -4,7 +4,7 @@
 
 This project is a script to periodically check a domain's status. 
 
-There is a domain I would like, however it currently has the following bizarre statuses. 
+There is a domain I would like, however it currently has the following uncommon statuses. 
 
 '''
   Domain Status: DeleteProhibited
@@ -20,7 +20,9 @@ So I have built this myself.
 
 ## The Solution
 
-TODO: detail. 
+This is a python script occupying a docker container that will run as a lambda function in AWS on a schedule of every 15 minutes.
+
+The script checks the whois status of the domain and will let me know via email if the status changes AT ALL so I can check and see if the cases the domain is involved with have resolved. 
 
 TODO: This code will evolve over time to be hosted on AWS and ultimately alert via text
 
@@ -76,20 +78,19 @@ DEVOPS
   - add custom domain name 
   - perform DKIM authentication to validate domain
   - send test email
+  - add SES permissions to lambda
 
 DEV
 - replace code in local version that grabs json files from local file system to use `boto3` library instead 
 - modify logging to print to console
-- replace dummy alert messages
-
-TODO: finish documentation of steps
+- replace dummy alert message functions
 
 ## Helpful Documentation 
 
 - AWS
   - https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#configuration-images-permissions
   - https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-push-iam.html
-  - dhttps://repost.aws/knowledge-center/lambda-send-email-ses
+  - https://repost.aws/knowledge-center/lambda-send-email-ses
   - https://repost.aws/knowledge-center/lambda-ecr-image
   - https://docs.aws.amazon.com/lambda/latest/dg/with-eventbridge-scheduler.html 
   - https://docs.aws.amazon.com/lambda/latest/dg/python-image.html
